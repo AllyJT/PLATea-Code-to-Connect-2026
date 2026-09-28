@@ -20,9 +20,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   /*
-   * Warm the image cache for the flower artwork
-   * shown in LoadingScreen, so it doesn't visibly
-   * pop in after the surrounding text later on.
+    * Preload the cherry blossom image
    */
   useEffect(() => {
     Asset.loadAsync(
