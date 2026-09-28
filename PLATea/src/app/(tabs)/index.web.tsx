@@ -5,11 +5,12 @@ import { setWorkerUrl } from 'maplibre-gl';
 import Map, { Layer, MapRef, Marker, Source } from 'react-map-gl/maplibre';
 import { CherryBlossomBorder, FlowerBorderMode } from '../../components/flower-border';
 
-import { styles } from '../../styles/index.web';
-import { Alert, useColorScheme } from 'react-native';
+import {styles} from '../../styles/index.web';
+import {Alert, Pressable, Text} from 'react-native';
+import {useColorScheme} from '@/hooks/use-color-scheme'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { router } from 'expo-router';
+import { Link, router } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 
@@ -28,7 +29,6 @@ import { useMelbourneTrees } from '@/hooks/useMelbourneTrees';
 import { useTreeTracking } from '@/hooks/useTreeTracking';
 import { useWalkingRoute } from '@/hooks/routeFinding';
 import { MapCameraController } from '@/types/mapCamera';
-
 // Darkmode and lightmode
 
 const LIGHTMODE_STYLE = 'https://tiles.openfreemap.org/styles/positron';
@@ -56,9 +56,10 @@ const MELBOURNE_CENTER = {
 
 
 export default function MapScreenWeb() {
+  /* Color mode */
   const colorScheme = useColorScheme();
   const mapStyle = colorScheme === 'dark' ? DARKMODE_STYLE : LIGHTMODE_STYLE;
-
+  /* Flower border */
   const [flowerMode] = useState<FlowerBorderMode>('corners');
   const [mapReady, setMapReady] = useState(false);
 
@@ -94,25 +95,32 @@ export default function MapScreenWeb() {
     },
   });
 
+  /* Selected Tree */
   const { selectedTree, hasSelectedTree } =
     useSelectedTree({ mapRef: cameraController, mapReady });
 
+  /*
+  * load tree for the start of the map
+  * so the people can see and try to discorver new tree
+   */
   const {
     trees: allTrees,
     loading: allTreesLoading,
   } = useMelbourneTrees(MELBOURNE_BOUNDS, 1000);
 
+  /*load the blooming tree */
   const {
     trees: bloomingTrees,
     loading: bloomingTreesLoading,
   } = useBloomingTrees(bloomingOnly);
-
+  /* Tree Selection */
   const trees = bloomingOnly ? bloomingTrees : allTrees;
+  /*loading tree */
   const loading = bloomingOnly
     ? bloomingTreesLoading
     : allTreesLoading;
 
-
+  /* Tree Tracking */
   const {
     tracking,
     distance,
@@ -126,6 +134,7 @@ export default function MapScreenWeb() {
     treeLongitude: selectedTree.longitude,
   });
 
+  /* Route to selected tree */
   const { routeCoords } = useWalkingRoute({
     origin: userLocation,
     destination: hasSelectedTree
@@ -137,7 +146,7 @@ export default function MapScreenWeb() {
     active: tracking,
   });
 
-  /* Find nearby matches */
+  /* Find nearby matches for the tree */
   async function findNearbyMatches(
     scientificName: string
   ): Promise<NearbyTree[]> {
@@ -159,6 +168,8 @@ export default function MapScreenWeb() {
       8
     ).catch(() => []);
   }
+  /* Navigate to the Tree Details screen for the selected tree
+   */
   function backToTreeDetails() {
     router.push({
       pathname: '/tree-details',
@@ -167,8 +178,7 @@ export default function MapScreenWeb() {
   }
 
   /*
-   * Deselect the current tree and clear
-   * its params from the route.
+   * Stop the tracking, and return to the default map view
    */
   function closeSelectedTree() {
     if (tracking) {
@@ -447,11 +457,15 @@ export default function MapScreenWeb() {
             onCameraPress={searchByImage}
           />
         )}
+        {/*Login button*/}
+        <Link href ="/login" asChild>
+          <Pressable style={styles.button}>
+            <Text style={styles.loginText}>Login</Text>
+          </Pressable>
+        </Link>
 
         {/*
-         * A selected tree's popup takes over the
-         * bottom of the screen instead of the
-         * search sheet, so they don't collide.
+            selected Tree to track
          */}
         {hasSelectedTree ? (
           <SelectedTreeCard
@@ -462,7 +476,7 @@ export default function MapScreenWeb() {
             onDetailsPress={backToTreeDetails}
             onClose={closeSelectedTree}
           />
-        ) : (
+        ) : ( /*Finding the in bloom tree */
           <ExploreSheet
             ref={sheetRef}
             query={query}

@@ -6,6 +6,8 @@ type Props = TextInputProps & {
   onCameraPress?: () => void;
 };
 
+// The search bar
+
 export default function SearchBar({
   style,
   containerStyle,
