@@ -23,23 +23,21 @@ const styles = StyleSheet.create ({
     button: {
         justifyContent: 'center' as const,
         alignItems: 'center' as const,
-        position: 'absolute',
-        zIndex: 30,
+        marginTop: 20,      
         width: 100,
         height: 50,
         borderRadius: 25,
-        backgroundColor: '#ffbfdd',
+        backgroundColor: '#ffcae1',
         shadowOpacity: 0.15,
-        shadowRadius: 8,
+        shadowRadius: 4,
         shadowOffset: {
         width: 0,
         height: 3,
         },
-        elevation: 30,
     },
     loginText: {
-        color: '#891032',
-        fontWeight: '300' as const,
+        color: '#ed1b57',
+        fontWeight: '500' as const,
     },
 }
 )

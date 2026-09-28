@@ -3,7 +3,7 @@ import { styles } from "@/styles/logIn";
 import LogButton from "@/components/logButton";
 import { useState } from "react";
 import {Ionicons} from "@expo/vector-icons";
-
+import { CherryBlossom } from "@/components/flower-border/shared";
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -13,6 +13,9 @@ export default function LoginScreen() {
     return (   
         <View style = {styles.container}>
             <View style = {styles.card}>
+                <View style={styles.borderShadow}>
+                <CherryBlossom scale={2.0} />
+                </View>
                 <Text style = {styles.text}>Login Screen</Text>
 
                 {/*Login Component*/}
